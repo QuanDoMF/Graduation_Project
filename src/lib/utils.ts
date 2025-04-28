@@ -149,6 +149,23 @@ export const getVietnameseOrderStatus = (
       return 'Từ chối'
   }
 }
+export const getEnglistOrderStatus = (
+  status: (typeof OrderStatus)[keyof typeof OrderStatus]
+) => {
+  switch (status) {
+    case OrderStatus.Delivered:
+      return 'Delivered'
+    case OrderStatus.Paid:
+      return 'Paid'
+    case OrderStatus.Pending:
+      return 'Pending'
+    case OrderStatus.Processing:
+      return 'Processing'
+    default:
+      return 'Rejected'
+  }
+}
+
 
 export const getVietnameseTableStatus = (
   status: (typeof TableStatus)[keyof typeof TableStatus]

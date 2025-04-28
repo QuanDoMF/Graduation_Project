@@ -46,7 +46,9 @@
     "processing": "Processing",
     "rejected": "Rejected",
     "delivered": "Delivered",
-    "paid": "Paid"
+    "paid": "Paid",
+    "updateOrderToast": "Dish {name} (Qty: {quantity}) has been updated to status \"{status}\"",
+    "paymentToast": "{guestName} at table {tableNumber} successfully paid {count} order(s)"
   },
   "ManageAccounts": {
     "title": "Manage accounts",

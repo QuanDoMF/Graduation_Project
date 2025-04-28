@@ -4,13 +4,13 @@ import { useAppStore } from '@/components/app-provider'
 import { Badge } from '@/components/ui/badge'
 import { toast } from '@/components/ui/use-toast'
 import { OrderStatus, OrderStatusType } from "@/constants/type";
-import { formatCurrency, getVietnameseOrderStatus } from '@/lib/utils'
+import { formatCurrency, getEnglistOrderStatus, getVietnameseOrderStatus } from '@/lib/utils'
 import { useGuestGetOrderListQuery } from '@/queries/useGuest'
 import {
   PayGuestOrdersResType,
   UpdateOrderResType
 } from '@/schemaValidations/order.schema'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useEffect, useMemo } from 'react'
 
@@ -19,6 +19,7 @@ export default function OrdersCart() {
   const orders = useMemo(() => data?.payload.data ?? [], [data])
   const socket = useAppStore((state) => state.socket)
   const t = useTranslations("GuestOrder");
+  const locale = useLocale()
   const { waitingForPaying, paid } = useMemo(() => {
     return orders.reduce(
       (result, order) => {
@@ -74,16 +75,23 @@ export default function OrdersCart() {
     function onDisconnect() {
       console.log('disconnect')
     }
-
     function onUpdateOrder(data: UpdateOrderResType['data']) {
       const {
         dishSnapshot: { name },
-        quantity
+        quantity,
+        status
       } = data
+
+      const statusMessage =
+        locale === 'vi'
+          ? getVietnameseOrderStatus(status)
+          : getEnglistOrderStatus(status)
       toast({
-        description: `Món ${name} (SL: ${quantity}) vừa được cập nhật sang trạng thái "${getVietnameseOrderStatus(
-          data.status
-        )}"`
+        description: t('updateOrderToast', {
+          name,
+          quantity,
+          status: statusMessage
+        })
       })
       refetch()
     }
@@ -91,7 +99,11 @@ export default function OrdersCart() {
     function onPayment(data: PayGuestOrdersResType['data']) {
       const { guest } = data[0]
       toast({
-        description: `${guest?.name} tại bàn ${guest?.tableNumber} thanh toán thành công ${data.length} đơn`
+        description: t('paymentToast', {
+          guestName: guest?.name ?? '',
+          tableNumber: guest?.tableNumber ?? '',
+          count: data.length
+        })
       })
       refetch()
     }

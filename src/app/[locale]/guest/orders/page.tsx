@@ -13,7 +13,7 @@ export default async function OrdersPage(props: {
   });
   return (
     <>
-      <div className="max-w-[400px] mx-auto space-y-6">
+      <div className="w-[400px] mx-auto space-y-6">
         <div className="bg-gradient-to-r from-green-500 to-green-400 rounded-lg shadow-lg shadow-green-500/50">
           <h1 className="text-center text-2xl font-extrabold text-white py-4 relative shadow-lg shadow-green-500/50">
             {t("description")}

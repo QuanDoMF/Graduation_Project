@@ -47,7 +47,9 @@
     "processing": "Đang nấu",
     "rejected": "Từ chối",
     "delivered": "Đã phục vụ",
-    "paid": "Đã thanh toán"
+    "paid": "Đã thanh toán",
+    "updateOrderToast": "Món {name} (SL: {quantity}) vừa được cập nhật sang trạng thái \"{status}\"",
+    "paymentToast": "{guestName} tại bàn {tableNumber} thanh toán thành công {count} đơn"
   },
   "ManageAccounts": {
     "title": "Quản lý tài khoản",
