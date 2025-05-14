@@ -1,0 +1,20 @@
+import http from '@/lib/http'
+import {
+  CreateCategoryBodyType,
+  CategoryListResType,
+  CategoryResType,
+  UpdateCategoryBodyType
+} from '@/schemaValidations/category.schema'
+
+const categoryApiRequest = {
+  // Note: Next.js 15 thì mặc định fetch sẽ là { cache: 'no-store' } (dynamic rendering page)
+  // Hiện tại next.js 14 mặc định fetch sẽ là { cache: 'force-cache' } nghĩa là cache (static rendering page)
+  list: () =>
+    http.get<CategoryListResType>('dishes', { next: { tags: ['categories'] } }),
+  add: (body: CreateCategoryBodyType) => http.post<CategoryResType>('categories', body),
+  updateDish: (id: number, body: UpdateCategoryBodyType) =>
+    http.put<CategoryResType>(`categories/${id}`, body),
+  deleteDish: (id: number) => http.delete<CategoryResType>(`categories/${id}`)
+}
+
+export default categoryApiRequest
