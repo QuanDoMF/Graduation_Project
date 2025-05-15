@@ -1,5 +1,5 @@
 import { Role } from '@/constants/type'
-import { Home, ShoppingCart, Users2, Salad, Table } from 'lucide-react'
+import { Home, ShoppingCart, Users2, Salad, ChartBarStacked , Table } from 'lucide-react'
 
 const menuItems = [
   {
@@ -28,7 +28,7 @@ const menuItems = [
   },
   {
     title: 'Danh mục',
-    Icon: Salad,
+    Icon: ChartBarStacked,
     href: '/manage/category',
     roles: [Role.Owner, Role.Employee]
   },
@@ -39,5 +39,4 @@ const menuItems = [
     roles: [Role.Owner]
   }
 ]
-
 export default menuItems

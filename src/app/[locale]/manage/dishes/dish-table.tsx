@@ -56,6 +56,8 @@ import EditDish from '@/app/[locale]/manage/dishes/edit-dish'
 import AddDish from '@/app/[locale]/manage/dishes/add-dish'
 import { useDeleteDishMutation, useDishListQuery } from '@/queries/useDish'
 import { toast } from '@/components/ui/use-toast'
+import { usePathname, useRouter } from '@/i18n/routing'
+import { useLocale } from 'next-intl'
 
 type DishItem = DishListResType['data'][0]
 
@@ -208,6 +210,9 @@ function AlertDialogDeleteDish({
 const PAGE_SIZE = 10
 export default function DishTable() {
   const searchParam = useSearchParams()
+  const router = useRouter()
+  const locale = useLocale()
+  const pathname = usePathname();
   const page = searchParam.get('page') ? Number(searchParam.get('page')) : 1
   const pageIndex = page - 1
   const [dishIdEdit, setDishIdEdit] = useState<number | undefined>()
@@ -244,6 +249,20 @@ export default function DishTable() {
       pagination
     }
   })
+
+  useEffect(() => {
+    // Check và redirect nếu current page > total page sau khi data thay đổi
+    const totalItem = data.length
+    const totalPage = Math.ceil(totalItem / PAGE_SIZE)
+    const currentPage = table.getState().pagination.pageIndex + 1 // pageIndex là 0-based
+  
+    if (currentPage > totalPage && totalPage > 0) {
+      const params = new URLSearchParams(searchParam.toString())
+      params.set('page', totalPage.toString())
+      const pathWithQuery = `/${pathname}?${params.toString()}`
+      router.replace(pathWithQuery)
+    }
+  }, [data, table, router, locale])
 
   useEffect(() => {
     table.setPagination({

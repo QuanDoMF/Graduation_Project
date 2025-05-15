@@ -46,94 +46,57 @@ import {
 } from '@/components/ui/alert-dialog'
 import {
   formatCurrency,
-  getVietnameseDishStatus,
   handleErrorApi
 } from '@/lib/utils'
 import { useSearchParams } from 'next/navigation'
 import AutoPagination from '@/components/auto-pagination'
-import { DishListResType } from '@/schemaValidations/dish.schema'
-import EditDish from '@/app/[locale]/manage/dishes/edit-dish'
-import AddDish from '@/app/[locale]/manage/dishes/add-dish'
-import { useDeleteDishMutation, useDishListQuery } from '@/queries/useDish'
+import { CategoryListResType } from '@/schemaValidations/category.schema'
+import EditCategory from '@/app/[locale]/manage/category/edit-category'
+import AddCategory from '@/app/[locale]/manage/category/add-category'
+import { useDeleteCategoryMutation, useCategoryListQuery } from '@/queries/useCategory'
 import { toast } from '@/components/ui/use-toast'
+import { usePathname, useRouter } from '@/i18n/routing'
+import { useLocale } from 'next-intl'
+import { Locale } from '@/config'
 
-type DishItem = DishListResType['data'][0]
+type CategoryItem = CategoryListResType['data'][0]
 
-const DishTableContext = createContext<{
-  setDishIdEdit: (value: number) => void
-  dishIdEdit: number | undefined
-  dishDelete: DishItem | null
-  setDishDelete: (value: DishItem | null) => void
+const CategoryTableContext = createContext<{
+  setCategoryIdEdit: (value: number) => void
+  categoryIdEdit: number | undefined
+  categoryDelete: CategoryItem | null
+  setCategoryDelete: (value: CategoryItem | null) => void
 }>({
-  setDishIdEdit: (value: number | undefined) => {},
-  dishIdEdit: undefined,
-  dishDelete: null,
-  setDishDelete: (value: DishItem | null) => {}
+  setCategoryIdEdit: (value: number | undefined) => {},
+  categoryIdEdit: undefined,
+  categoryDelete: null,
+  setCategoryDelete: (value: CategoryItem | null) => {}
 })
 
-export const columns: ColumnDef<DishItem>[] = [
+export const columns: ColumnDef<CategoryItem>[] = [
   {
     accessorKey: 'id',
     header: 'ID'
   },
   {
-    accessorKey: 'image',
-    header: 'Ảnh',
-    cell: ({ row }) => (
-      <div>
-        <Avatar className='aspect-square w-[100px] h-[100px] rounded-md object-cover'>
-          <AvatarImage src={row.getValue('image')} />
-          <AvatarFallback className='rounded-none'>
-            {row.original.name}
-          </AvatarFallback>
-        </Avatar>
-      </div>
-    )
-  },
-  {
     accessorKey: 'name',
-    header: 'Tên',
-    cell: ({ row }) => <div className='capitalize'>{row.getValue('name')}</div>
-  },
-  {
-    accessorKey: 'price',
-    header: 'Giá cả',
-    cell: ({ row }) => (
-      <div className='capitalize'>{formatCurrency(row.getValue('price'))}</div>
-    )
-  },
-  {
-    accessorKey: 'description',
-    header: 'Mô tả',
-    cell: ({ row }) => (
-      <div
-        dangerouslySetInnerHTML={{
-          __html: DOMPurify.sanitize(row.getValue('description'))
-        }}
-        className='whitespace-pre-line'
-      />
-    )
-  },
-  {
-    accessorKey: 'status',
-    header: 'Trạng thái',
-    cell: ({ row }) => (
-      <div>{getVietnameseDishStatus(row.getValue('status'))}</div>
-    )
+    header: () => <div className="text-center">Tên danh mục</div>,
+    cell: ({ row }) => <div className='capitalize text-center'>{row.getValue('name')}</div>
   },
   {
     id: 'actions',
     enableHiding: false,
     cell: function Actions({ row }) {
-      const { setDishIdEdit, setDishDelete } = useContext(DishTableContext)
-      const openEditDish = () => {
-        setDishIdEdit(row.original.id)
+      const { setCategoryIdEdit, setCategoryDelete } = useContext(CategoryTableContext)
+      const openEditCategory = () => {
+        setCategoryIdEdit(row.original.id)
       }
 
-      const openDeleteDish = () => {
-        setDishDelete(row.original)
+      const openDeleteCategory = () => {
+        setCategoryDelete(row.original)
       }
       return (
+        <div className="text-center">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant='ghost' className='h-8 w-8 p-0'>
@@ -144,28 +107,29 @@ export const columns: ColumnDef<DishItem>[] = [
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={openEditDish}>Sửa</DropdownMenuItem>
-            <DropdownMenuItem onClick={openDeleteDish}>Xóa</DropdownMenuItem>
+            <DropdownMenuItem onClick={openEditCategory}>Sửa</DropdownMenuItem>
+            <DropdownMenuItem onClick={openDeleteCategory}>Xóa</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        </div>
       )
     }
   }
 ]
 
-function AlertDialogDeleteDish({
-  dishDelete,
-  setDishDelete
+function AlertDialogDeleteCategory({
+  categoryDelete,
+  setCategoryDelete
 }: {
-  dishDelete: DishItem | null
-  setDishDelete: (value: DishItem | null) => void
+  categoryDelete: CategoryItem | null
+  setCategoryDelete: (value: CategoryItem | null) => void
 }) {
-  const { mutateAsync } = useDeleteDishMutation()
-  const deleteDish = async () => {
-    if (dishDelete) {
+  const { mutateAsync } = useDeleteCategoryMutation()
+  const deleteCategory = async () => {
+    if (categoryDelete) {
       try {
-        const result = await mutateAsync(dishDelete.id)
-        setDishDelete(null)
+        const result = await mutateAsync(categoryDelete.id)
+        setCategoryDelete(null)
         toast({
           title: result.payload.message
         })
@@ -178,27 +142,27 @@ function AlertDialogDeleteDish({
   }
   return (
     <AlertDialog
-      open={Boolean(dishDelete)}
+      open={Boolean(categoryDelete)}
       onOpenChange={(value) => {
         if (!value) {
-          setDishDelete(null)
+          setCategoryDelete(null)
         }
       }}
     >
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Xóa món ăn?</AlertDialogTitle>
+          <AlertDialogTitle>Xóa danh mục?</AlertDialogTitle>
           <AlertDialogDescription>
             Món{' '}
             <span className='bg-foreground text-primary-foreground rounded px-1'>
-              {dishDelete?.name}
+              {categoryDelete?.name}
             </span>{' '}
             sẽ bị xóa vĩnh viễn
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={deleteDish}>Continue</AlertDialogAction>
+          <AlertDialogAction onClick={deleteCategory}>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
@@ -206,14 +170,17 @@ function AlertDialogDeleteDish({
 }
 // Số lượng item trên 1 trang
 const PAGE_SIZE = 10
-export default function DishTable() {
+export default function CategoryTable() {
   const searchParam = useSearchParams()
+  const router = useRouter()
+  const locale = useLocale()
+  const pathname = usePathname();
   const page = searchParam.get('page') ? Number(searchParam.get('page')) : 1
   const pageIndex = page - 1
-  const [dishIdEdit, setDishIdEdit] = useState<number | undefined>()
-  const [dishDelete, setDishDelete] = useState<DishItem | null>(null)
-  const dishListQuery = useDishListQuery()
-  const data = dishListQuery.data?.payload.data ?? []
+  const [categoryIdEdit, setCategoryIdEdit] = useState<number | undefined>()
+  const [categoryDelete, setCategoryDelete] = useState<CategoryItem | null>(null)
+  const categoryListQuery = useCategoryListQuery()
+  const data = categoryListQuery.data?.payload.data ?? []
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -246,6 +213,20 @@ export default function DishTable() {
   })
 
   useEffect(() => {
+    // Check và redirect nếu current page > total page sau khi data thay đổi
+    const totalItem = data.length
+    const totalPage = Math.ceil(totalItem / PAGE_SIZE)
+    const currentPage = table.getState().pagination.pageIndex + 1 // pageIndex là 0-based
+  
+    if (currentPage > totalPage && totalPage > 0) {
+      const params = new URLSearchParams(searchParam.toString())
+      params.set('page', totalPage.toString())
+      const pathWithQuery = `/${pathname}?${params.toString()}`
+      router.replace(pathWithQuery)
+    }
+  }, [data, table, router, locale])
+
+  useEffect(() => {
     table.setPagination({
       pageIndex,
       pageSize: PAGE_SIZE
@@ -253,14 +234,14 @@ export default function DishTable() {
   }, [table, pageIndex])
 
   return (
-    <DishTableContext.Provider
-      value={{ dishIdEdit, setDishIdEdit, dishDelete, setDishDelete }}
+    <CategoryTableContext.Provider
+      value={{ categoryIdEdit, setCategoryIdEdit, categoryDelete, setCategoryDelete }}
     >
       <div className='w-full'>
-        <EditDish id={dishIdEdit} setId={setDishIdEdit} />
-        <AlertDialogDeleteDish
-          dishDelete={dishDelete}
-          setDishDelete={setDishDelete}
+        <EditCategory id={categoryIdEdit} setId={setCategoryIdEdit} />
+        <AlertDialogDeleteCategory
+          categoryDelete={categoryDelete}
+          setCategoryDelete={setCategoryDelete}
         />
         <div className='flex items-center py-4'>
           <Input
@@ -272,7 +253,7 @@ export default function DishTable() {
             className='max-w-sm'
           />
           <div className='ml-auto flex items-center gap-2'>
-            <AddDish />
+            <AddCategory />
           </div>
         </div>
         <div className='rounded-md border'>
@@ -335,11 +316,11 @@ export default function DishTable() {
             <AutoPagination
               page={table.getState().pagination.pageIndex + 1}
               pageSize={table.getPageCount()}
-              pathname='/manage/dishes'
+              pathname='/manage/category'
             />
           </div>
         </div>
       </div>
-    </DishTableContext.Provider>
+    </CategoryTableContext.Provider>
   )
 }

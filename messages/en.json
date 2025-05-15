@@ -58,6 +58,10 @@
     "title": "Dashboard",
     "description": "View and analyze sales data"
   },
+  "Category": {
+    "title": "Category",
+    "description": "Manage categories"
+  },
   "Dishes": {
     "title": "Dishes",
     "description": "Manage dishes"

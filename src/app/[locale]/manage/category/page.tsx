@@ -5,7 +5,7 @@ import {
     CardHeader,
     CardTitle
   } from '@/components/ui/card'
-  import DishTable from '@/app/[locale]/manage/dishes/dish-table'
+  import CategoryTable from '@/app/[locale]/manage/category/category-table'
   import { Suspense } from 'react'
   import envConfig, { Locale } from '@/config'
   import { Metadata } from 'next'
@@ -19,10 +19,10 @@ import {
     const params = await props.params;
     const t = await getTranslations({
       locale: params.locale,
-      namespace: 'Dishes'
+      namespace: 'Category'
     })
   
-    const url = envConfig.NEXT_PUBLIC_URL + `/${params.locale}/manage/dishes`
+    const url = envConfig.NEXT_PUBLIC_URL + `/${params.locale}/manage/category`
   
     return {
       title: t('title'),
@@ -36,18 +36,18 @@ import {
     }
   }
   
-  export default function DishesPage() {
+  export default function CategoryPage() {
     return (
       <main className='grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8'>
         <div className='space-y-2'>
           <Card x-chunk='dashboard-06-chunk-0'>
             <CardHeader>
-              <CardTitle>Món ăn</CardTitle>
-              <CardDescription>Quản lý món ăn</CardDescription>
+              <CardTitle>Danh mục</CardTitle>
+              <CardDescription>Quản lý danh mục</CardDescription>
             </CardHeader>
             <CardContent>
               <Suspense>
-                <DishTable />
+                <CategoryTable />
               </Suspense>
             </CardContent>
           </Card>

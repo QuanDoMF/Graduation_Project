@@ -59,6 +59,10 @@
     "title": "Bảng điều khiển",
     "description": "Xem và phân tích dữ liệu bán hàng"
   },
+  "Category": {
+    "title": "Quản lý danh mục",
+    "description": "Quản lý danh mục trong hệ thống"
+  },
   "Dishes": {
     "title": "Món ăn",
     "description": "Quản lý món ăn"

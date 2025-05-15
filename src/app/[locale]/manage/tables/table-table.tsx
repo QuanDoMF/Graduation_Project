@@ -52,6 +52,8 @@ import AddTable from '@/app/[locale]/manage/tables/add-table'
 import { useDeleteTableMutation, useTableListQuery } from '@/queries/useTable'
 import QRCodeTable from '@/components/qrcode-table'
 import { toast } from '@/components/ui/use-toast'
+import { usePathname, useRouter } from '@/i18n/routing'
+import { useLocale } from 'next-intl'
 
 type TableItem = TableListResType['data'][0]
 
@@ -192,6 +194,9 @@ function AlertDialogDeleteTable({
 const PAGE_SIZE = 10
 export default function TableTable() {
   const searchParam = useSearchParams()
+  const router = useRouter()
+  const locale = useLocale()
+  const pathname = usePathname();
   const page = searchParam.get('page') ? Number(searchParam.get('page')) : 1
   const pageIndex = page - 1
   // const params = Object.fromEntries(searchParam.entries())
@@ -230,6 +235,20 @@ export default function TableTable() {
     }
   })
 
+  useEffect(() => {
+    // Check và redirect nếu current page > total page sau khi data thay đổi
+    const totalItem = data.length
+    const totalPage = Math.ceil(totalItem / PAGE_SIZE)
+    const currentPage = table.getState().pagination.pageIndex + 1 // pageIndex là 0-based
+  
+    if (currentPage > totalPage && totalPage > 0) {
+      const params = new URLSearchParams(searchParam.toString())
+      params.set('page', totalPage.toString())
+      const pathWithQuery = `/${pathname}?${params.toString()}`
+      router.replace(pathWithQuery)
+    }
+  }, [data, table, router, locale])
+  
   useEffect(() => {
     table.setPagination({
       pageIndex,

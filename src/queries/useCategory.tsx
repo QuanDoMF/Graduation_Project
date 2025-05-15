@@ -9,56 +9,56 @@ export const useCategoryListQuery = () => {
   })
 }
 
-// export const useGetDishQuery = ({
-//   id,
-//   enabled
-// }: {
-//   id: number
-//   enabled: boolean
-// }) => {
-//   return useQuery({
-//     queryKey: ['dishes', id],
-//     queryFn: () => dishApiRequest.getDish(id),
-//     enabled
-//   })
-// }
+export const useGetCategoryQuery = ({
+  id,
+  enabled
+}: {
+  id: number
+  enabled: boolean
+}) => {
+  return useQuery({
+    queryKey: ['categories', id],
+    queryFn: () => categoryApiRequest.getCategory(id),
+    enabled
+  })
+}
 
-// export const useAddDishMutation = () => {
-//   const queryClient = useQueryClient()
-//   return useMutation({
-//     mutationFn: dishApiRequest.add,
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({
-//         queryKey: ['dishes']
-//       })
-//     }
-//   })
-// }
+export const useAddCategoryMutation = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: categoryApiRequest.add,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['categories']
+      })
+    }
+  })
+}
 
-// export const useUpdateDishMutation = () => {
-//   const queryClient = useQueryClient()
+export const useUpdateCategoryMutation = () => {
+  const queryClient = useQueryClient()
 
-//   return useMutation({
-//     mutationFn: ({ id, ...body }: UpdateDishBodyType & { id: number }) =>
-//       dishApiRequest.updateDish(id, body),
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({
-//         queryKey: ['dishes'],
-//         exact: true
-//       })
-//     }
-//   })
-// }
+  return useMutation({
+    mutationFn: ({ id, ...body }: UpdateCategoryBodyType & { id: number }) =>
+      categoryApiRequest.updateCategory(id, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['categories'],
+        exact: true
+      })
+    }
+  })
+}
 
-// export const useDeleteDishMutation = () => {
-//   const queryClient = useQueryClient()
+export const useDeleteCategoryMutation = () => {
+  const queryClient = useQueryClient()
 
-//   return useMutation({
-//     mutationFn: dishApiRequest.deleteDish,
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({
-//         queryKey: ['dishes']
-//       })
-//     }
-//   })
-// }
+  return useMutation({
+    mutationFn: categoryApiRequest.deleteCategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['categories']
+      })
+    }
+  })
+}
