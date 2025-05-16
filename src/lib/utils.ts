@@ -260,3 +260,8 @@ export const generateSlugUrl = ({ name, id }: { name: string; id: number }) => {
 export const getIdFromSlugUrl = (slug: string) => {
   return Number(slug.split('-i.')[1])
 }
+
+export const capitalizeFirstLetter = (string: string) => {
+  if(!string) return ''
+  return string.charAt(0).toUpperCase() + string.slice(1)
+}

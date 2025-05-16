@@ -54,7 +54,7 @@ export default function AddDish() {
     defaultValues: {
       name: "",
       description: "",
-      category: "",
+      categoryId: undefined,
       price: 0,
       image: undefined,
       status: DishStatus.Unavailable,
@@ -241,15 +241,15 @@ export default function AddDish() {
               />
               <FormField
                 control={form.control}
-                name="category"
+                name="categoryId"
                 render={({ field }) => (
                   <FormItem>
                     <div className="grid grid-cols-4 items-center justify-items-start gap-4">
                       <Label htmlFor="description">Danh mục</Label>
                       <div className="col-span-3 w-full space-y-2">
                         <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
+                          onValueChange={(value) => field.onChange(Number(value))}
+                          value={field.value?.toString()}
                         >
                           <FormControl>
                             <SelectTrigger>
@@ -260,7 +260,8 @@ export default function AddDish() {
                             {categories.map((category) => (
                               <SelectItem
                                 key={category.id}
-                                value={category.name}
+                                value={category.id.toString()}
+                                className="capitalize"
                               >
                                 {category.name}
                               </SelectItem>

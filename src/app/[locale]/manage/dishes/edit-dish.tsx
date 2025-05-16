@@ -22,7 +22,7 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { getVietnameseDishStatus, handleErrorApi } from '@/lib/utils'
+import { capitalizeFirstLetter, getVietnameseDishStatus, handleErrorApi } from '@/lib/utils'
 import {
   Select,
   SelectContent,
@@ -40,6 +40,8 @@ import { useUploadMediaMutation } from '@/queries/useMedia'
 import { useGetDishQuery, useUpdateDishMutation } from '@/queries/useDish'
 import { toast } from '@/components/ui/use-toast'
 import revalidateApiRequest from '@/apiRequests/revalidate'
+import { useCategoryListQuery } from '@/queries/useCategory'
+import { CategoryResType } from '@/schemaValidations/category.schema'
 
 export default function EditDish({
   id,
@@ -61,12 +63,17 @@ export default function EditDish({
       name: '',
       description: '',
       price: 0,
+      categoryId: undefined,
       image: undefined,
       status: DishStatus.Unavailable
     }
   })
   const image = form.watch('image')
   const name = form.watch('name')
+  const { data: categoryData } = useCategoryListQuery();
+  const categories = useMemo(() => {
+    return categoryData?.payload.data ?? [];
+  }, [categoryData]);
 
   const previewAvatarFromFile = useMemo(() => {
     if (file) {
@@ -77,11 +84,12 @@ export default function EditDish({
 
   useEffect(() => {
     if (data) {
-      const { name, image, description, price, status } = data.payload.data
+      const { name, image, description, categoryId, price, status } = data.payload.data
       form.reset({
         name,
         image: image ?? undefined,
         description,
+        categoryId,
         price,
         status
       })
@@ -236,6 +244,42 @@ export default function EditDish({
                           className='w-full'
                           {...field}
                         />
+                        <FormMessage />
+                      </div>
+                    </div>
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="categoryId"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="grid grid-cols-4 items-center justify-items-start gap-4">
+                      <Label htmlFor="description">Danh mục</Label>
+                      <div className="col-span-3 w-full space-y-2">
+                        <Select
+                          onValueChange={(value) => field.onChange(Number(value))}
+                          value={field.value?.toString()}
+                          defaultValue={field.value?.toString()}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Chọn danh mục" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {categories.map((category) => (
+                              <SelectItem
+                                key={category.id}
+                                value={category.id.toString()}
+                                className="capitalize"
+                              >
+                                {capitalizeFirstLetter(category.name)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </div>
                     </div>
