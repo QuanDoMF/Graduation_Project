@@ -34,7 +34,15 @@
     "description": "Menu của chúng tôi",
     "action": "Đặt hàng",
     "itemCount": "món",
-    "soldOut": "Hết hàng"
+    "soldOut": "Hết hàng",
+    "all": "Tất cả",
+    "categories": {
+      "banh-mi": "Bánh mì",
+      "mon-nuoc": "Món nước",
+      "xoi": "Xôi",
+      "khac": "Khác"
+    },
+    "noResult": "Không tìm thấy món ăn nào"
   },
   "GuestOrder": {
     "title": "Đơn hàng",

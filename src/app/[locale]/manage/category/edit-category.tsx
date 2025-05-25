@@ -66,9 +66,7 @@ export default function EditCategory({
   });
 
   useEffect(() => {
-    console.log("🚀 ~ useEffect ~ data:", data);
     if (data) {
-      console.log("🚀 ~ useEffect ~ data:", data);
       const { name } = data.payload.data;
       form.reset({
         name,

@@ -34,7 +34,15 @@
     "description": "Our menu",
     "action": "Order",
     "itemCount": "dish",
-    "soldOut": "Sold out"
+    "soldOut": "Sold out",
+    "all": "All",
+    "categories": {
+      "banh-mi": "Bread",
+      "mon-nuoc": "Noodle dish",
+      "xoi": "Sticky rice",
+      "khac": "Other"
+    },
+    "noResult": "No dishes found"
   },
   "GuestOrder": {
     "title": "Order",

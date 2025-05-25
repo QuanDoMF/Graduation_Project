@@ -5,7 +5,9 @@ export const CreateDishBody = z.object({
   name: z.string().min(1).max(256),
   price: z.coerce.number().positive(),
   description: z.string().max(10000),
-  categoryId: z.number({ required_error: "Please choose a category of the dish" }).positive(),
+  categoryId: z
+    .number({ required_error: "Please choose a category of the dish" })
+    .positive(),
   image: z
     .string({ required_error: "Please upload a photo of the dish" })
     .url(),
